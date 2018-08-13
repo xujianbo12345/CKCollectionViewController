@@ -17,15 +17,14 @@ Pod::Spec.new do |s|
 
   s.name         = "CKCollectionViewController"
   s.version      = "1.0.0"
-  s.summary      = "A short description of CKCollectionViewController."
+  s.summary      = "分页控制器"
 
   # This description is used to generate tags and improve search results.
   #   * Think: What does it do? Why did you write it? What is the focus?
   #   * Try to keep it short, snappy and to the point.
   #   * Write the description between the DESC delimiters below.
   #   * Finally, don't worry about the indent, CocoaPods strips it!
-  s.description  = <<-DESC
-                   DESC
+  s.description  = "一个基于UICollectionView 的分页控制器，适配横竖屏 和iPhoneX";
 
   s.homepage     = "https://github.com/xujianbo12345/CKCollectionViewController"
   # s.screenshots  = "www.example.com/screenshots_1.gif", "www.example.com/screenshots_2.gif"
@@ -62,7 +61,7 @@ Pod::Spec.new do |s|
   #
 
   # s.platform     = :ios
-  # s.platform     = :ios, "5.0"
+  s.platform     = :ios, "8.0"
 
   #  When using multiple platforms
   # s.ios.deployment_target = "5.0"
