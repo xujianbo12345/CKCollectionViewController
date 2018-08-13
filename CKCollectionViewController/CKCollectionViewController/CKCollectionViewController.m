@@ -10,7 +10,6 @@
 #import "UIViewController+CKAssist.h"
 #import "Masonry.h"
 #import "UIScrollView+CKFullScreenPop.h"
-#import "YYKit.h"
 
 //判断是否是iPhone X
 #define iPhoneX ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(1125, 2436), [[UIScreen mainScreen] currentMode].size) : NO)
@@ -220,7 +219,7 @@ static NSString * const cellReuseIdentifier = @"CellReuseIdentifier";
 }
 
 - (BOOL)isRTL {
-    if ([UIDevice systemVersion] >= 9.0) {
+    if ([UIDevice currentDevice].systemVersion.floatValue >= 9.0) {
         UIUserInterfaceLayoutDirection direction = [UIView userInterfaceLayoutDirectionForSemanticContentAttribute:self.view.semanticContentAttribute];
         return direction == UIUserInterfaceLayoutDirectionRightToLeft;
     }
@@ -294,10 +293,10 @@ static NSString * const cellReuseIdentifier = @"CellReuseIdentifier";
         if (@available(iOS 11.0, *)) {
             _collectionView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
         }
-        if ([UIDevice systemVersion] >= 9.0) {
+        if ([UIDevice currentDevice].systemVersion.floatValue >= 9.0) {
             _collectionView.semanticContentAttribute = [UIView appearance].semanticContentAttribute;
         }
-        if ([UIDevice systemVersion] >= 10.0) {
+        if ([UIDevice currentDevice].systemVersion.floatValue >= 10.0) {
             //iOS10 新增 prefetching  会导致调用 scrollToItemAtIndexPath 时 触发两次scrollViewDidEndScrollingAnimation 回到 导致用contentOffset可能计算index 异常
             _collectionView.prefetchingEnabled = NO;
         }

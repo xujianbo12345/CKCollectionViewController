@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "CKCollectionViewController"
-  s.version      = "1.0.1"
+  s.version      = "1.0.2"
   s.summary      = "分页控制器"
 
   # This description is used to generate tags and improve search results.
@@ -131,7 +131,6 @@ Pod::Spec.new do |s|
   # s.xcconfig = { "HEADER_SEARCH_PATHS" => "$(SDKROOT)/usr/include/libxml2" }
   # s.dependency "JSONKit", "~> 1.4"
 
-  s.dependency 'YYKit'
   s.dependency 'Masonry'
 
 
