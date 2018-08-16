@@ -67,7 +67,9 @@ static NSString * const cellReuseIdentifier = @"CellReuseIdentifier";
     
     if (self.isScrolling) {
         //点击滚动的话也可以不重新设置itemSize 因为size其实并没有发生变化 等发生变化后会触发次方法 设置contentOffset 在滚动中有概率影响后面根据contentOffset 取index
-        self.isScrolling = NO;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            self.isScrolling = NO;
+        });
         return;
     }
     
