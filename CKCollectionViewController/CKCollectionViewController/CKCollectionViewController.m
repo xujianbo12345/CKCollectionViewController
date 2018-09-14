@@ -12,11 +12,16 @@
 #import "UIScrollView+CKFullScreenPop.h"
 
 //判断是否是iPhone X
-#define iPhoneX ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(1125, 2436), [[UIScreen mainScreen] currentMode].size) : NO)
+#define iPhoneX ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? (\
+CGSizeEqualToSize(CGSizeMake(1125, 2436), [[UIScreen mainScreen] currentMode].size) || \
+CGSizeEqualToSize(CGSizeMake(1242, 2688), [[UIScreen mainScreen] currentMode].size) || \
+CGSizeEqualToSize(CGSizeMake(828, 1792), [[UIScreen mainScreen] currentMode].size) || \
+CGSizeEqualToSize(CGSizeMake(750, 1624), [[UIScreen mainScreen] currentMode].size)) : NO)
 
 @interface CKCollectionViewController ()
 
 @property (nonatomic, assign) BOOL isScrolling;
+@property (nonatomic, assign) BOOL didLoad;//是否是视图刚刚创建调用viewDidLoad
 
 @end
 
@@ -29,6 +34,7 @@ static NSString * const cellReuseIdentifier = @"CellReuseIdentifier";
     self.automaticallyAdjustsScrollViewInsets = NO;
     self.edgesForExtendedLayout = UIRectEdgeNone;
     self.extendedLayoutIncludesOpaqueBars = YES;
+    self.didLoad = YES;
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -63,13 +69,27 @@ static NSString * const cellReuseIdentifier = @"CellReuseIdentifier";
     }
 }
 
+- (void)delaySetCollectionViewSize:(NSValue *)value {
+    CGSize size = value.CGSizeValue;
+    self.isScrolling = NO;
+    if (self.didLoad) {
+        CGSize collectionSize = self.collectionView.size;
+        if (size.width == collectionSize.width) {
+            //要先判断width 相等再赋值是考虑到旋转的时候 size 不能跟collectionSize一样 因为旋转过来后collectionView size 还是原先的size 所以旋转的时候是用代理里面给的 将要旋转成的size
+            //第一次进入的时候延时后取collectionView 的size 因为size之后可能会被约束调整到合适的大小 不然会导致高度异常
+            size.height = collectionSize.height;
+        }
+        [self resizeColectionViewWithSize:size];
+        self.didLoad = NO;
+    }
+}
+
 - (void)resizeColectionViewWithSize:(CGSize)size {
     
     if (self.isScrolling) {
-        //点击滚动的话也可以不重新设置itemSize 因为size其实并没有发生变化 等发生变化后会触发次方法 设置contentOffset 在滚动中有概率影响后面根据contentOffset 取index
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            self.isScrolling = NO;
-        });
+        //点击滚动的话也可以不重新设置itemSize 因为size其实并没有发生变化 等发生变化后会触发次方法 设置contentOffset 在滚动中有概率影响后面根据contentOffset 取index 但是第一次加载的时候要根据父视图调整size 所以要延时一会再调整
+        [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(delaySetCollectionViewSize:) object:[NSValue valueWithCGSize:size]];
+        [self performSelector:@selector(delaySetCollectionViewSize:) withObject:[NSValue valueWithCGSize:size] afterDelay:0.5];
         return;
     }
     
@@ -113,9 +133,6 @@ static NSString * const cellReuseIdentifier = @"CellReuseIdentifier";
         if (!animated) {
             [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(setVisibleViewController) object:nil];
             [self performSelector:@selector(setVisibleViewController) withObject:nil afterDelay:0.1];
-            if ([_delegate respondsToSelector:@selector(collectionViewController:willTransitionToViewControllerAtIndex:)]) {
-                [_delegate collectionViewController:self willTransitionToViewControllerAtIndex:self.selectedIndex];
-            }
         }
     });
 }
