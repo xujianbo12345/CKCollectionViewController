@@ -73,7 +73,7 @@ static NSString * const cellReuseIdentifier = @"CellReuseIdentifier";
     CGSize size = value.CGSizeValue;
     self.isScrolling = NO;
     if (self.didLoad) {
-        CGSize collectionSize = self.collectionView.size;
+        CGSize collectionSize = self.collectionView.frame.size;
         if (size.width == collectionSize.width) {
             //要先判断width 相等再赋值是考虑到旋转的时候 size 不能跟collectionSize一样 因为旋转过来后collectionView size 还是原先的size 所以旋转的时候是用代理里面给的 将要旋转成的size
             //第一次进入的时候延时后取collectionView 的size 因为size之后可能会被约束调整到合适的大小 不然会导致高度异常
